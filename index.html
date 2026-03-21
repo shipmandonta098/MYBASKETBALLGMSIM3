@@ -680,7 +680,7 @@
     flex-direction: column;
     align-items: center;
     gap: 18px;
-    margin-bottom: 60px;
+    margin-bottom: 42px;
     animation: ts-fadein 1.2s ease forwards;
     opacity: 0;
   }
@@ -791,35 +791,89 @@
   .ts-corner.br { bottom: 24px; right: 24px; transform: scale(-1,-1); }
   .ts-corner.tl { top: 24px; left: 24px; }
 
-  /* Start button */
-  .ts-start-btn {
+  /* ── MAIN MENU TABS ── */
+  .ts-menu {
     position: relative;
     z-index: 2;
-    margin-top: 0;
-    font-family: 'Oswald', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: #080d18;
-    background: linear-gradient(135deg, #c9a84c 0%, #e8c96b 50%, #c9a84c 100%);
-    border: none;
-    padding: 14px 48px;
-    cursor: pointer;
-    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-    transition: filter 0.2s, transform 0.2s;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
     animation: ts-fadein 1.6s 0.8s ease forwards;
     opacity: 0;
-    box-shadow: 0 4px 24px rgba(201,168,76,0.3);
   }
-  .ts-start-btn:hover {
-    filter: brightness(1.12);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(201,168,76,0.45);
+
+  .ts-menu-divider {
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(201,168,76,0.35), transparent);
+    flex-shrink: 0;
   }
-  .ts-start-btn:active {
-    transform: translateY(0);
-    filter: brightness(0.95);
+
+  .ts-menu-tab {
+    font-family: 'Oswald', sans-serif;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(201,168,76,0.18);
+    color: #f0f0f0;
+    padding: 22px 56px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    min-width: 210px;
+    transition: background 0.22s, border-color 0.22s, transform 0.22s, box-shadow 0.22s;
+  }
+  .ts-menu-tab:first-child {
+    border-right: none;
+    clip-path: polygon(10px 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+  .ts-menu-tab:last-child {
+    border-left: none;
+    clip-path: polygon(0% 0%, calc(100% - 10px) 0%, 100% 100%, 0% 100%);
+  }
+
+  .ts-tab-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+  }
+  .ts-tab-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+  .ts-tab-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #6b7280;
+    white-space: nowrap;
+  }
+
+  /* New Career — gold accent */
+  .ts-tab-new .ts-tab-icon { color: #c9a84c; }
+  .ts-menu-tab.ts-tab-new:hover {
+    background: rgba(201,168,76,0.09);
+    border-color: rgba(201,168,76,0.55);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 36px rgba(201,168,76,0.22);
+  }
+  .ts-menu-tab.ts-tab-new:active { transform: translateY(-1px); }
+
+  /* Continue — white/steel accent */
+  .ts-tab-continue .ts-tab-icon { color: #d0d8e8; }
+  .ts-menu-tab.ts-tab-continue:not(:disabled):hover {
+    background: rgba(208,216,232,0.07);
+    border-color: rgba(208,216,232,0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 36px rgba(208,216,232,0.12);
+  }
+  .ts-menu-tab.ts-tab-continue:not(:disabled):active { transform: translateY(-1px); }
+
+  /* Continue disabled (no save) */
+  .ts-menu-tab.ts-tab-continue:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
   }
 </style>
 </head>
@@ -869,8 +923,20 @@
     </div>
   </div>
 
-  <!-- Enter button -->
-  <button class="ts-start-btn" onclick="enterGame()">Enter the League</button>
+  <!-- Main menu tabs -->
+  <div class="ts-menu">
+    <button class="ts-menu-tab ts-tab-new" onclick="newCareer()">
+      <span class="ts-tab-icon">✦</span>
+      <span class="ts-tab-label">New Career</span>
+      <span class="ts-tab-hint">Start a fresh dynasty</span>
+    </button>
+    <div class="ts-menu-divider"></div>
+    <button class="ts-menu-tab ts-tab-continue" id="ts-continue-btn" onclick="continueCareer()" disabled>
+      <span class="ts-tab-icon">▶</span>
+      <span class="ts-tab-label">Continue</span>
+      <span class="ts-tab-hint" id="ts-continue-hint">No save found</span>
+    </button>
+  </div>
 
 </div>
 
@@ -1034,13 +1100,49 @@ const TEAM_ABBRS = ['NY','LA','CHI','HOU','PHX','PHI','SA','DAL','DEN','POR','MI
 let G = {}; // game state
 
 // ═══════════════════════════════════════════════════════
-//  TITLE SCREEN
+//  TITLE SCREEN  –  MENU LOGIC
 // ═══════════════════════════════════════════════════════
 
-function enterGame() {
-  const ts = document.getElementById('title-screen');
-  ts.classList.add('hidden');
+const SAVE_KEY = 'hoops-dynasty-save';
+
+function checkSave() {
+  const raw = localStorage.getItem(SAVE_KEY);
+  if (!raw) return;
+  try {
+    const save = JSON.parse(raw);
+    const btn  = document.getElementById('ts-continue-btn');
+    const hint = document.getElementById('ts-continue-hint');
+    btn.disabled = false;
+    hint.textContent = `Season ${save.season} · Week ${save.week}`;
+  } catch(e) { /* corrupt save — leave Continue disabled */ }
 }
+
+function saveGame() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(G)); } catch(e) {}
+}
+
+function newCareer() {
+  init();
+  enterGame();
+}
+
+function continueCareer() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    G = JSON.parse(raw);
+    renderAll();
+    enterGame();
+  } catch(e) {
+    toast('Save data corrupted. Start a new career.');
+  }
+}
+
+function enterGame() {
+  document.getElementById('title-screen').classList.add('hidden');
+}
+
+checkSave();
 
 // ═══════════════════════════════════════════════════════
 //  INITIALIZATION
@@ -1244,6 +1346,7 @@ function simulateWeek() {
   G.gameLog = [...logLines, ...G.gameLog].slice(0, 100);
   G.week++;
   renderAll();
+  saveGame();
   toast(`Week ${G.week-1} simulated!`);
 }
 
@@ -1258,6 +1361,7 @@ function simulateSeason() {
   }
   G.gameLog.unshift('<span class="log-header">── Full Season Simulated ──</span>');
   renderAll();
+  saveGame();
   toast('Season complete! Check standings.');
 }
 
@@ -1570,9 +1674,8 @@ document.getElementById('player-modal').addEventListener('click', function(e) {
 });
 
 // ═══════════════════════════════════════════════════════
-//  KICK OFF
+//  KICK OFF  (game initialises via menu selection)
 // ═══════════════════════════════════════════════════════
-init();
 </script>
 </body>
 </html>
