@@ -536,9 +536,343 @@
     pointer-events: none;
   }
   #toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── TITLE SCREEN ── */
+  #title-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #080d18;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: 'Oswald', sans-serif;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #title-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* Court perspective stage */
+  .ts-court-stage {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120%;
+    max-width: 1400px;
+    perspective: 700px;
+    perspective-origin: 50% 0%;
+  }
+  .ts-court {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    transform: rotateX(52deg);
+    transform-origin: top center;
+    background: #6b3d1e;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* Wood grain strips */
+  .ts-court::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 34px,
+      rgba(0,0,0,0.18) 34px,
+      rgba(0,0,0,0.18) 35px,
+      rgba(255,255,255,0.04) 35px,
+      rgba(255,255,255,0.04) 36px
+    ),
+    linear-gradient(
+      180deg,
+      #7a4520 0%,
+      #8c5128 20%,
+      #7a4520 40%,
+      #9a5c30 60%,
+      #7a4520 80%,
+      #8c5128 100%
+    );
+  }
+
+  /* Court lines */
+  .ts-court::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      /* center line */
+      linear-gradient(180deg, transparent calc(50% - 1px), rgba(255,255,255,0.35) calc(50% - 1px), rgba(255,255,255,0.35) calc(50% + 1px), transparent calc(50% + 1px)),
+      /* 3-point line arcs via box outline */
+      radial-gradient(ellipse 58% 72% at 50% 110%, transparent 95%, rgba(255,255,255,0.28) 95.5%, rgba(255,255,255,0.28) 97%, transparent 97.5%),
+      radial-gradient(ellipse 58% 72% at 50% -10%, transparent 95%, rgba(255,255,255,0.28) 95.5%, rgba(255,255,255,0.28) 97%, transparent 97.5%),
+      /* center circle */
+      radial-gradient(circle 18% at 50% 50%, transparent 92%, rgba(255,255,255,0.3) 92.5%, rgba(255,255,255,0.3) 95%, transparent 95.5%),
+      /* lane boxes */
+      linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.22) 30%, rgba(255,255,255,0.22) 30.6%, transparent 30.6%),
+      linear-gradient(90deg, transparent 69.4%, rgba(255,255,255,0.22) 69.4%, rgba(255,255,255,0.22) 70%, transparent 70%),
+      linear-gradient(180deg, transparent 15%, rgba(255,255,255,0.22) 15%, rgba(255,255,255,0.22) 15.6%, transparent 15.6%),
+      linear-gradient(180deg, transparent 84.4%, rgba(255,255,255,0.22) 84.4%, rgba(255,255,255,0.22) 85%, transparent 85%);
+  }
+
+  /* Spotlight overlays */
+  .ts-spotlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .ts-spotlight::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 38% 55% at 28% 38%, rgba(255,200,100,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 30% 45% at 72% 62%, rgba(255,220,160,0.15) 0%, transparent 65%),
+      radial-gradient(ellipse 22% 35% at 52% 20%, rgba(255,255,230,0.12) 0%, transparent 60%);
+    animation: ts-spots 6s ease-in-out infinite alternate;
+  }
+  @keyframes ts-spots {
+    0%   { opacity: 0.7; }
+    50%  { opacity: 1; }
+    100% { opacity: 0.8; }
+  }
+
+  /* Dark vignette over court edges */
+  .ts-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, #080d18 0%, transparent 30%, transparent 55%, #080d18 100%),
+      linear-gradient(90deg, #080d18 0%, transparent 12%, transparent 88%, #080d18 100%);
+    pointer-events: none;
+  }
+
+  /* Global ambient spotlights on background */
+  .ts-ambient {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 50% 60% at 25% 55%, rgba(200,140,50,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 45% 55% at 75% 45%, rgba(200,160,80,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 35% 45% at 50% 30%, rgba(255,240,200,0.06) 0%, transparent 65%);
+    animation: ts-ambient 8s ease-in-out infinite alternate;
+  }
+  @keyframes ts-ambient {
+    0%   { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  /* Logo container */
+  .ts-logo-wrap {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 60px;
+    animation: ts-fadein 1.2s ease forwards;
+    opacity: 0;
+  }
+  @keyframes ts-fadein {
+    0%   { opacity: 0; transform: translateY(18px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Top accent line */
+  .ts-accent-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+  }
+  .ts-accent-line {
+    height: 1px;
+    width: 80px;
+    background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+  }
+  .ts-accent-diamond {
+    width: 6px;
+    height: 6px;
+    border: 1px solid #c9a84c;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* Main logo text */
+  .ts-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: clamp(3rem, 9vw, 7.5rem);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #f0f0f0;
+    text-shadow:
+      0 0 40px rgba(201,168,76,0.35),
+      0 0 80px rgba(201,168,76,0.15),
+      0 2px 4px rgba(0,0,0,0.8);
+    line-height: 1;
+  }
+
+  /* Subtitle */
+  .ts-subtitle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(0.55rem, 1.5vw, 0.85rem);
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: #c9a84c;
+    opacity: 0.9;
+  }
+
+  /* Bottom accent line (mirrors top) */
+  .ts-accent-bottom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Outer frame lines */
+  .ts-frame {
+    position: absolute;
+    inset: 24px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    animation: ts-fadein 1.8s 0.4s ease forwards;
+  }
+  .ts-frame::before,
+  .ts-frame::after {
+    content: '';
+    position: absolute;
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+  .ts-frame::before {
+    inset: 0;
+    border-radius: 2px;
+  }
+  .ts-frame::after {
+    inset: 8px;
+    border-radius: 1px;
+    border-color: rgba(201,168,76,0.07);
+  }
+
+  /* Corner accents */
+  .ts-corner {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    z-index: 2;
+    opacity: 0;
+    animation: ts-fadein 2s 0.6s ease forwards;
+  }
+  .ts-corner::before,
+  .ts-corner::after {
+    content: '';
+    position: absolute;
+    background: #c9a84c;
+  }
+  .ts-corner::before { width: 100%; height: 1px; top: 0; left: 0; }
+  .ts-corner::after  { width: 1px; height: 100%; top: 0; left: 0; }
+  .ts-corner.tr { top: 24px; right: 24px; transform: scaleX(-1); }
+  .ts-corner.bl { bottom: 24px; left: 24px; transform: scaleY(-1); }
+  .ts-corner.br { bottom: 24px; right: 24px; transform: scale(-1,-1); }
+  .ts-corner.tl { top: 24px; left: 24px; }
+
+  /* Start button */
+  .ts-start-btn {
+    position: relative;
+    z-index: 2;
+    margin-top: 0;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #080d18;
+    background: linear-gradient(135deg, #c9a84c 0%, #e8c96b 50%, #c9a84c 100%);
+    border: none;
+    padding: 14px 48px;
+    cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: filter 0.2s, transform 0.2s;
+    animation: ts-fadein 1.6s 0.8s ease forwards;
+    opacity: 0;
+    box-shadow: 0 4px 24px rgba(201,168,76,0.3);
+  }
+  .ts-start-btn:hover {
+    filter: brightness(1.12);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(201,168,76,0.45);
+  }
+  .ts-start-btn:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+  }
 </style>
 </head>
 <body>
+
+<!-- ══════════════════════════════════════════
+     TITLE SCREEN
+══════════════════════════════════════════ -->
+<div id="title-screen">
+
+  <!-- Ambient arena glow -->
+  <div class="ts-ambient"></div>
+
+  <!-- Court perspective -->
+  <div class="ts-court-stage">
+    <div class="ts-court">
+      <div class="ts-spotlight"></div>
+    </div>
+    <div class="ts-vignette"></div>
+  </div>
+
+  <!-- Outer decorative frame -->
+  <div class="ts-frame"></div>
+
+  <!-- Corner accents -->
+  <div class="ts-corner tl"></div>
+  <div class="ts-corner tr"></div>
+  <div class="ts-corner bl"></div>
+  <div class="ts-corner br"></div>
+
+  <!-- Logo block -->
+  <div class="ts-logo-wrap">
+    <div class="ts-accent-top">
+      <div class="ts-accent-line"></div>
+      <div class="ts-accent-diamond"></div>
+      <div class="ts-accent-line"></div>
+    </div>
+
+    <div class="ts-title">Hoops Dynasty</div>
+
+    <div class="ts-subtitle">Basketball General Manager</div>
+
+    <div class="ts-accent-bottom">
+      <div class="ts-accent-line"></div>
+      <div class="ts-accent-diamond"></div>
+      <div class="ts-accent-line"></div>
+    </div>
+  </div>
+
+  <!-- Enter button -->
+  <button class="ts-start-btn" onclick="enterGame()">Enter the League</button>
+
+</div>
 
 <div id="app">
   <!-- HEADER -->
@@ -698,6 +1032,15 @@ const CITY_NAMES = ['New York','Los Angeles','Chicago','Houston','Phoenix','Phil
 const TEAM_ABBRS = ['NY','LA','CHI','HOU','PHX','PHI','SA','DAL','DEN','POR','MIA','GS','BOS','BKN','MEM','UTA','MIL','ATL','CHA','ORL','IND','CLE','TOR','DET','NO','SAC','OKC','MIN','WAS','SEA'];
 
 let G = {}; // game state
+
+// ═══════════════════════════════════════════════════════
+//  TITLE SCREEN
+// ═══════════════════════════════════════════════════════
+
+function enterGame() {
+  const ts = document.getElementById('title-screen');
+  ts.classList.add('hidden');
+}
 
 // ═══════════════════════════════════════════════════════
 //  INITIALIZATION
