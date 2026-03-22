@@ -791,6 +791,310 @@
   .ts-corner.br { bottom: 24px; right: 24px; transform: scale(-1,-1); }
   .ts-corner.tl { top: 24px; left: 24px; }
 
+  /* ══════════════════════════════════════════════════
+     SETUP & SAVE-LIST OVERLAYS
+  ══════════════════════════════════════════════════ */
+
+  .ts-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    background: #080d18;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateX(100%);
+    transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+  .ts-overlay.show {
+    transform: translateX(0);
+    pointer-events: all;
+  }
+
+  /* Overlay header bar */
+  .ts-ov-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 36px 16px;
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+    flex-shrink: 0;
+  }
+  .ts-ov-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #c9a84c;
+  }
+  .ts-back-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: #6b7280;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 0;
+    transition: color 0.2s;
+  }
+  .ts-back-btn:hover { color: #c9a84c; }
+
+  /* ── SETUP SCREEN ─────────────────────────────────── */
+  .ts-setup-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 36px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .ts-setup-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .ts-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 200px;
+  }
+  .ts-field-sm { flex: 0 0 140px; min-width: unset; }
+  .ts-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+  .ts-input {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.2);
+    color: #f0f0f0;
+    padding: 9px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .ts-input:focus { border-color: rgba(201,168,76,0.55); }
+
+  /* Section divider */
+  .ts-section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+  .ts-section-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(201,168,76,0.12);
+  }
+
+  /* Team grid */
+  .ts-team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+    gap: 8px;
+  }
+  .ts-team-card {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    cursor: pointer;
+    padding: 0 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    transition: border-color 0.18s, background 0.18s, transform 0.18s;
+    overflow: hidden;
+    position: relative;
+  }
+  .ts-team-card:hover {
+    border-color: rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.05);
+    transform: translateY(-2px);
+  }
+  .ts-team-card.selected {
+    border-color: #c9a84c;
+    background: rgba(201,168,76,0.08);
+    box-shadow: 0 0 18px rgba(201,168,76,0.18);
+  }
+  .ts-team-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 4px; right: 6px;
+    font-size: 0.65rem;
+    color: #c9a84c;
+  }
+  .ts-team-color-bar {
+    width: 100%;
+    height: 5px;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+  }
+  .ts-team-abbr {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    line-height: 1;
+  }
+  .ts-team-city {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+  .ts-team-name {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #d1d5db;
+    text-align: center;
+    padding: 0 4px;
+  }
+  .ts-team-conf {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+    color: #4b5563;
+    text-transform: uppercase;
+  }
+
+  /* Setup footer */
+  .ts-setup-footer {
+    padding: 16px 36px 24px;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ts-confirm-btn {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #080d18;
+    background: linear-gradient(135deg, #c9a84c 0%, #e8c96b 50%, #c9a84c 100%);
+    border: none;
+    padding: 14px 56px;
+    cursor: pointer;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    transition: filter 0.2s, transform 0.2s;
+  }
+  .ts-confirm-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .ts-confirm-btn:not(:disabled):hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+  }
+
+  /* ── SAVE LIST SCREEN ─────────────────────────────── */
+  .ts-saves-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ts-saves-empty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: #4b5563;
+    letter-spacing: 0.1em;
+    text-align: center;
+    margin-top: 60px;
+  }
+  .ts-save-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    cursor: pointer;
+    transition: background 0.18s, border-color 0.18s;
+  }
+  .ts-save-item:hover {
+    background: rgba(201,168,76,0.07);
+    border-color: rgba(201,168,76,0.3);
+  }
+  .ts-save-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .ts-save-info { flex: 1; display: flex; flex-direction: column; gap: 3px; overflow: hidden; }
+  .ts-save-league {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #f0f0f0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ts-save-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: #6b7280;
+  }
+  .ts-save-date {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: #4b5563;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .ts-save-delete {
+    background: none;
+    border: 1px solid rgba(239,68,68,0.2);
+    color: rgba(239,68,68,0.4);
+    font-size: 0.7rem;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .ts-save-delete:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+    background: rgba(239,68,68,0.08);
+  }
+
   /* ── MAIN MENU TABS ── */
   .ts-menu {
     position: relative;
@@ -921,6 +1225,48 @@
       <div class="ts-accent-diamond"></div>
       <div class="ts-accent-line"></div>
     </div>
+  </div>
+
+  <!-- ── SETUP OVERLAY (new career) ─────────────────── -->
+  <div id="ts-setup" class="ts-overlay">
+    <div class="ts-ov-header">
+      <button class="ts-back-btn" onclick="showMainMenu()">← Back</button>
+      <span class="ts-ov-title">New Career</span>
+      <span></span>
+    </div>
+    <div class="ts-setup-body">
+      <div class="ts-setup-row">
+        <div class="ts-field">
+          <label class="ts-label" for="setup-league-name">League Name</label>
+          <input class="ts-input" id="setup-league-name" type="text" value="Hoops Dynasty" maxlength="32" spellcheck="false" autocomplete="off">
+        </div>
+        <div class="ts-field ts-field-sm">
+          <label class="ts-label" for="setup-season">Season Year</label>
+          <input class="ts-input" id="setup-season" type="number" value="2026" min="1950" max="2100" step="1">
+        </div>
+      </div>
+      <div class="ts-section-label">
+        <div class="ts-section-line"></div>
+        <span>Select Your Team</span>
+        <div class="ts-section-line"></div>
+      </div>
+      <div class="ts-team-grid" id="setup-team-grid"></div>
+    </div>
+    <div class="ts-setup-footer">
+      <button class="ts-confirm-btn" id="setup-start-btn" onclick="startNewCareer()" disabled>
+        Select a team to begin
+      </button>
+    </div>
+  </div>
+
+  <!-- ── SAVE LIST OVERLAY (continue) ───────────────── -->
+  <div id="ts-savelist" class="ts-overlay">
+    <div class="ts-ov-header">
+      <button class="ts-back-btn" onclick="showMainMenu()">← Back</button>
+      <span class="ts-ov-title">Continue Career</span>
+      <span></span>
+    </div>
+    <div class="ts-saves-body" id="ts-saves-body"></div>
   </div>
 
   <!-- Main menu tabs -->
@@ -1094,8 +1440,39 @@
 const POSITIONS = ['PG','SG','SF','PF','C'];
 const FIRST_NAMES = ['James','Luka','Joel','Jayson','Stephen','Kevin','Giannis','Anthony','Nikola','Damian','Trae','Karl-Anthony','Zion','Ja','LeBron','Devin','Paul','Donovan','Bam','Khris','Marcus','Brandon','Jordan','Miles','Tyrese','OG','Pascal','Fred','Gary','Darius'];
 const LAST_NAMES = ['Williams','Johnson','Davis','Brown','Jones','Miller','Wilson','Moore','Taylor','Anderson','Thompson','Harris','Martin','Jackson','White','Thomas','Garcia','Lee','Walker','Hall','Young','Robinson','King','Wright','Scott','Green','Baker','Adams','Nelson','Carter'];
-const CITY_NAMES = ['New York','Los Angeles','Chicago','Houston','Phoenix','Philadelphia','San Antonio','Dallas','Denver','Portland','Miami','Golden State','Boston','Brooklyn','Memphis','Utah','Milwaukee','Atlanta','Charlotte','Orlando','Indiana','Cleveland','Toronto','Detroit','New Orleans','Sacramento','Oklahoma City','Minnesota','Washington','Seattle'];
-const TEAM_ABBRS = ['NY','LA','CHI','HOU','PHX','PHI','SA','DAL','DEN','POR','MIA','GS','BOS','BKN','MEM','UTA','MIL','ATL','CHA','ORL','IND','CLE','TOR','DET','NO','SAC','OKC','MIN','WAS','SEA'];
+
+const FICTIONAL_TEAMS = [
+  { city:'Ironwood',   name:'Forge',     abbr:'IW',  color:'#b45309', conf:'East' },
+  { city:'Crestfall',  name:'Raptors',   abbr:'CFR', color:'#0f766e', conf:'East' },
+  { city:'Vantridge',  name:'Wolves',    abbr:'VTW', color:'#1e3a8a', conf:'East' },
+  { city:'Lakecrest',  name:'Titans',    abbr:'LKT', color:'#0e7490', conf:'East' },
+  { city:'Pinebrook',  name:'Eagles',    abbr:'PBE', color:'#15803d', conf:'East' },
+  { city:'Stormhaven', name:'Thunder',   abbr:'STH', color:'#7e22ce', conf:'East' },
+  { city:'Ashford',    name:'Hunters',   abbr:'AFH', color:'#9f1239', conf:'East' },
+  { city:'Dunmoor',    name:'Bears',     abbr:'DMB', color:'#92400e', conf:'East' },
+  { city:'Ridgeline',  name:'Outlaws',   abbr:'RLO', color:'#374151', conf:'East' },
+  { city:'Harrowgate', name:'Knights',   abbr:'HGK', color:'#1e40af', conf:'East' },
+  { city:'Bayswater',  name:'Sharks',    abbr:'BWS', color:'#155e75', conf:'East' },
+  { city:'Edgemont',   name:'Lions',     abbr:'EML', color:'#b45309', conf:'East' },
+  { city:'Thornfield', name:'Stallions', abbr:'TFS', color:'#6b21a8', conf:'East' },
+  { city:'Cliffton',   name:'Blaze',     abbr:'CLB', color:'#c2410c', conf:'East' },
+  { city:'Westmere',   name:'Phantoms',  abbr:'WMP', color:'#334155', conf:'East' },
+  { city:'Glenrock',   name:'Giants',    abbr:'GRG', color:'#3730a3', conf:'West' },
+  { city:'Summerpeak', name:'Storm',     abbr:'SPS', color:'#0369a1', conf:'West' },
+  { city:'Northvale',  name:'Vipers',    abbr:'NVV', color:'#166534', conf:'West' },
+  { city:'Coldwater',  name:'Rooks',     abbr:'CWR', color:'#1e293b', conf:'West' },
+  { city:'Eastbridge', name:'Fury',      abbr:'EBF', color:'#dc2626', conf:'West' },
+  { city:'Highfield',  name:'Hawks',     abbr:'HFH', color:'#d97706', conf:'West' },
+  { city:'Silverton',  name:'Foxes',     abbr:'SVF', color:'#6b7280', conf:'West' },
+  { city:'Stonehaven', name:'Rams',      abbr:'SHR', color:'#7c3aed', conf:'West' },
+  { city:'Blackwell',  name:'Crows',     abbr:'BWC', color:'#111827', conf:'West' },
+  { city:'Maplewood',  name:'Lynx',      abbr:'MWL', color:'#be123c', conf:'West' },
+  { city:'Foxhaven',   name:'Serpents',  abbr:'FHS', color:'#0d9488', conf:'West' },
+  { city:'Greystone',  name:'Badgers',   abbr:'GBG', color:'#4b5563', conf:'West' },
+  { city:'Coalport',   name:'Miners',    abbr:'CPM', color:'#78350f', conf:'West' },
+  { city:'Redfield',   name:'Rockets',   abbr:'RFR', color:'#ef4444', conf:'West' },
+  { city:'Pinecrest',  name:'Owls',      abbr:'PCO', color:'#047857', conf:'West' },
+];
 
 let G = {}; // game state
 
@@ -1103,39 +1480,100 @@ let G = {}; // game state
 //  TITLE SCREEN  –  MENU LOGIC
 // ═══════════════════════════════════════════════════════
 
-const SAVE_KEY = 'hoops-dynasty-save';
+const SAVES_INDEX_KEY = 'hoops-dynasty-saves';
 
-function checkSave() {
-  const raw = localStorage.getItem(SAVE_KEY);
-  if (!raw) return;
-  try {
-    const save = JSON.parse(raw);
-    const btn  = document.getElementById('ts-continue-btn');
-    const hint = document.getElementById('ts-continue-hint');
-    btn.disabled = false;
-    hint.textContent = `Season ${save.season} · Week ${save.week}`;
-  } catch(e) { /* corrupt save — leave Continue disabled */ }
+// ── helpers ──────────────────────────────────────────
+function escHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function formatDate(ts) {
+  return new Date(ts).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 }
 
+// ── save index ────────────────────────────────────────
+function getSavesIndex() {
+  try { return JSON.parse(localStorage.getItem(SAVES_INDEX_KEY)) || []; }
+  catch(e) { return []; }
+}
+function setSavesIndex(idx) {
+  localStorage.setItem(SAVES_INDEX_KEY, JSON.stringify(idx));
+}
+
+// ── save / load / delete ──────────────────────────────
 function saveGame() {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify(G)); } catch(e) {}
+  if (!G.saveId) return;
+  try {
+    localStorage.setItem('hoops-dynasty-' + G.saveId, JSON.stringify(G));
+    const myTeam = G.teams[G.myTeamId];
+    const entry = {
+      id: G.saveId,
+      leagueName: G.leagueName,
+      season: G.season,
+      week: G.week,
+      teamName: myTeam.city + ' ' + myTeam.name,
+      teamColor: myTeam.color,
+      teamAbbr: myTeam.abbr,
+      savedAt: Date.now()
+    };
+    const idx = getSavesIndex().filter(s => s.id !== G.saveId);
+    idx.unshift(entry);
+    setSavesIndex(idx);
+    // refresh continue button
+    checkSave();
+  } catch(e) {}
+}
+
+function loadCareer(id) {
+  try {
+    const raw = localStorage.getItem('hoops-dynasty-' + id);
+    if (!raw) { toast('Save not found.'); return; }
+    G = JSON.parse(raw);
+    renderAll();
+    showMainMenu();
+    enterGame();
+  } catch(e) {
+    toast('Save data corrupted.');
+  }
+}
+
+function deleteCareer(id, event) {
+  event.stopPropagation();
+  if (!confirm('Delete this career? This cannot be undone.')) return;
+  localStorage.removeItem('hoops-dynasty-' + id);
+  const idx = getSavesIndex().filter(s => s.id !== id);
+  setSavesIndex(idx);
+  renderSaveList();
+  checkSave();
+}
+
+// ── menu state ────────────────────────────────────────
+function checkSave() {
+  const saves = getSavesIndex();
+  const btn  = document.getElementById('ts-continue-btn');
+  const hint = document.getElementById('ts-continue-hint');
+  if (saves.length > 0) {
+    btn.disabled = false;
+    hint.textContent = saves.length === 1 ? '1 saved career' : `${saves.length} saved careers`;
+  } else {
+    btn.disabled = true;
+    hint.textContent = 'No save found';
+  }
+}
+
+function showMainMenu() {
+  document.getElementById('ts-setup').classList.remove('show');
+  document.getElementById('ts-savelist').classList.remove('show');
 }
 
 function newCareer() {
-  init();
-  enterGame();
+  buildTeamGrid();
+  document.getElementById('ts-setup').classList.add('show');
 }
 
 function continueCareer() {
-  try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (!raw) return;
-    G = JSON.parse(raw);
-    renderAll();
-    enterGame();
-  } catch(e) {
-    toast('Save data corrupted. Start a new career.');
-  }
+  renderSaveList();
+  document.getElementById('ts-savelist').classList.add('show');
 }
 
 function enterGame() {
@@ -1144,16 +1582,78 @@ function enterGame() {
 
 checkSave();
 
+// ── Setup screen ──────────────────────────────────────
+function buildTeamGrid() {
+  const grid = document.getElementById('setup-team-grid');
+  grid.dataset.selected = '';
+  grid.innerHTML = FICTIONAL_TEAMS.map((t, i) => `
+    <div class="ts-team-card" data-id="${i}" onclick="selectTeam(${i})">
+      <div class="ts-team-color-bar" style="background:${t.color}"></div>
+      <div class="ts-team-abbr" style="color:${t.color}">${t.abbr}</div>
+      <div class="ts-team-city">${t.city}</div>
+      <div class="ts-team-name">${t.name}</div>
+      <div class="ts-team-conf">${t.conf}</div>
+    </div>`).join('');
+  // reset start button
+  const btn = document.getElementById('setup-start-btn');
+  btn.disabled = true;
+  btn.textContent = 'Select a team to begin';
+}
+
+function selectTeam(id) {
+  document.querySelectorAll('.ts-team-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector(`.ts-team-card[data-id="${id}"]`).classList.add('selected');
+  document.getElementById('setup-team-grid').dataset.selected = id;
+  const t = FICTIONAL_TEAMS[id];
+  const btn = document.getElementById('setup-start-btn');
+  btn.disabled = false;
+  btn.textContent = `Start Dynasty — ${t.city} ${t.name}`;
+}
+
+function startNewCareer() {
+  const grid = document.getElementById('setup-team-grid');
+  const myTeamId = parseInt(grid.dataset.selected);
+  if (isNaN(myTeamId)) return;
+  const leagueName = document.getElementById('setup-league-name').value.trim() || 'Hoops Dynasty';
+  const season = parseInt(document.getElementById('setup-season').value) || 2026;
+  init({ leagueName, season, myTeamId });
+  saveGame();
+  showMainMenu();
+  enterGame();
+}
+
+// ── Save list screen ──────────────────────────────────
+function renderSaveList() {
+  const body = document.getElementById('ts-saves-body');
+  const saves = getSavesIndex();
+  if (saves.length === 0) {
+    body.innerHTML = '<div class="ts-saves-empty">No saved careers yet.<br>Start a New Career to begin.</div>';
+    return;
+  }
+  body.innerHTML = saves.map(s => `
+    <div class="ts-save-item" onclick="loadCareer('${escHtml(s.id)}')">
+      <div class="ts-save-badge" style="background:${escHtml(s.teamColor || '#374151')}">${escHtml(s.teamAbbr || '?')}</div>
+      <div class="ts-save-info">
+        <div class="ts-save-league">${escHtml(s.leagueName)}</div>
+        <div class="ts-save-meta">${escHtml(s.teamName)} · Season ${s.season} · Week ${s.week}</div>
+      </div>
+      <div class="ts-save-date">${formatDate(s.savedAt)}</div>
+      <button class="ts-save-delete" onclick="deleteCareer('${escHtml(s.id)}', event)" title="Delete">✕</button>
+    </div>`).join('');
+}
+
 // ═══════════════════════════════════════════════════════
 //  INITIALIZATION
 // ═══════════════════════════════════════════════════════
 
-function init() {
+function init(cfg = {}) {
   G = {
-    season: 2026,
+    saveId:     cfg.saveId     || (Date.now().toString(36) + Math.random().toString(36).slice(2,5)),
+    leagueName: cfg.leagueName || 'Hoops Dynasty',
+    season:     cfg.season     || 2026,
     week: 1,
     totalWeeks: 26,
-    myTeamId: 0,
+    myTeamId:   cfg.myTeamId  != null ? cfg.myTeamId : 0,
     teams: [],
     schedule: [],
     draftClass: [],
@@ -1218,24 +1718,20 @@ function generateRoster() {
   return players.sort((a,b) => b.ovr - a.ovr);
 }
 
-const TEAM_COLORS = ['#e05c2a','#1d6fa4','#c8102e','#ce1141','#1d1160','#006bb6','#c4ced4','#007dc5','#0e2240','#e03a3e','#98002e','#fdb927','#007a33','#000000','#5d76a9','#002b5c','#00471b','#e03a3e','#00788c','#0077c0','#002d62','#6f263d','#ce1141','#c8102e','#002b5c','#5a2d81','#007ac1','#0c2340','#002b5c','#00653a'];
-
 function generateTeams() {
-  for (let i = 0; i < 30; i++) {
+  FICTIONAL_TEAMS.forEach((t, i) => {
     G.teams.push({
       id: i,
-      city: CITY_NAMES[i],
-      name: 'Team ' + TEAM_ABBRS[i],
-      abbr: TEAM_ABBRS[i],
-      color: TEAM_COLORS[i],
+      city: t.city,
+      name: t.name,
+      abbr: t.abbr,
+      color: t.color,
       wins: 0,
       losses: 0,
       roster: generateRoster(),
-      conf: i < 15 ? 'East' : 'West'
+      conf: t.conf
     });
-  }
-  // Rename user's team nicely
-  G.teams[0].name = 'Knicks';
+  });
 }
 
 function generateSchedule() {
@@ -1459,7 +1955,7 @@ function renderAll() {
   document.getElementById('sidebar-logo').style.background = myTeam.color;
   document.getElementById('sidebar-team').textContent = myTeam.name;
   document.getElementById('sidebar-record').textContent = `${myTeam.wins}-${myTeam.losses}`;
-  document.getElementById('season-badge').textContent = `Season ${G.season} · Week ${Math.min(G.week, G.totalWeeks)}`;
+  document.getElementById('season-badge').textContent = `${G.leagueName || 'Hoops Dynasty'} · Season ${G.season} · Week ${Math.min(G.week, G.totalWeeks)}`;
 
   renderDashboard();
   renderRoster();
